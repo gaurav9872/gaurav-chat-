@@ -16,13 +16,12 @@ jobs:
           gradle-version: '9.3.1'
       - name: Generate Fixed Debug Keystore & Print SHA-1
         run: |
-          mkdir -p ~/.android
-          keytool -genkey -v -keystore ~/.android/debug.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -startdate "2026/01/01 00:00:00" -dname "CN=Android Debug,O=Android,C=US"
-          keytool -list -v -keystore ~/.android/debug.keystore -alias androiddebugkey -storepass android -keypass android | grep SHA1
+          keytool -genkey -v -keystore debug.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -startdate "2026/01/01 00:00:00" -dname "CN=Android Debug,O=Android,C=US"
+          keytool -list -v -keystore debug.keystore -alias androiddebugkey -storepass android -keypass android | grep SHA1
       - name: Build Debug APK
         run: gradle assembleDebug
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: Chat-Gaurav-APK
-          path: app/build/outputs/apk/debug/app-debug.apk
+          path: app/build/out

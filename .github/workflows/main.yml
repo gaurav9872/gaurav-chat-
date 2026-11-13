@@ -1,4 +1,4 @@
- name: Build Chat Gaurav APK
+name: Build Chat Gaurav APK
 on: [push, workflow_dispatch]
 jobs:
   build:

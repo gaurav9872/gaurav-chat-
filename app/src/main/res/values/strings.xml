@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Chat Gaurav</string>
+    <string name="tab_chats">Chats</string>
+    <string name="tab_calls">Calls</string>
+    <string name="tab_profile_qr">Profile &amp; QR</string>
+    <string name="sign_in_google">Continue with Google</string>
+    <string name="secret_mode_label">Secret Mode (Auto-Delete &amp; Encrypted)</string>
+    <string name="share_qr_code">Share QR</string>
+    <string name="scan_from_gallery">Scan from Gallery / Media File</string>
+    <string name="notification_channel_messages">Incoming Messages</string>
+    <string name="notification_channel_calls">Voice Calls</string>
+    <string name="notification_channel_sync">Real-Time Message &amp; Call Sync</string>
+</resources>

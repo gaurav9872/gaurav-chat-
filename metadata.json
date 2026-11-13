@@ -1,0 +1,6 @@
+{
+  "name": "Chat Gaurav",
+  "description": "Real-time Android messaging and WebRTC voice calling app with end-to-end encrypted disappearing secret mode and QR connect.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

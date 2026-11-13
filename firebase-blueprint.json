@@ -1,0 +1,142 @@
+{
+  "entities": {
+    "UserPublicProfile": {
+      "title": "UserPublicProfile",
+      "description": "Public discoverable profile for Chat Gaurav users without raw PII.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "Firebase Auth UID" },
+        "displayName": { "type": "string", "description": "User display name" },
+        "handle": { "type": "string", "description": "Searchable handle" },
+        "emailHash": { "type": "string", "description": "SHA-256 hash of lowercase email for private lookup" },
+        "photoUrl": { "type": "string", "description": "Profile avatar URL" },
+        "bio": { "type": "string", "description": "Short status line" },
+        "publicKey": { "type": "string", "description": "Base64 X.509 ECDH P-256 public key for secret mode" },
+        "isOnline": { "type": "boolean", "description": "Live online status" },
+        "isDiscoverable": { "type": "boolean", "description": "Whether user can be found via search" },
+        "lastSeen": { "type": "string", "format": "date-time", "description": "Server timestamp of last activity" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Server timestamp" },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Server timestamp" }
+      },
+      "required": ["uid", "displayName", "handle", "emailHash", "isOnline", "isDiscoverable", "createdAt", "updatedAt"]
+    },
+    "UserPrivateInfo": {
+      "title": "UserPrivateInfo",
+      "description": "Strictly owner-only PII and device notification token.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "description": "Owner Firebase Auth UID" },
+        "email": { "type": "string", "description": "User email address" },
+        "fcmToken": { "type": "string", "description": "Firebase Cloud Messaging device token" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Server timestamp" },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Server timestamp" }
+      },
+      "required": ["userId", "email", "createdAt", "updatedAt"]
+    },
+    "ChatThread": {
+      "title": "ChatThread",
+      "description": "1-on-1 conversation metadata with typing and secret mode state.",
+      "type": "object",
+      "properties": {
+        "participantIds": { "type": "array", "description": "Exactly 2 participant UIDs" },
+        "participantNames": { "type": "object", "description": "Map of UID to display name" },
+        "participantPhotos": { "type": "object", "description": "Map of UID to avatar URL" },
+        "lastMessageText": { "type": "string", "description": "Last message preview or encrypted label" },
+        "lastMessageSenderId": { "type": "string", "description": "UID of last sender" },
+        "lastMessageStatus": { "type": "string", "enum": ["sent", "delivered", "read"], "description": "Tick state" },
+        "lastMessageAt": { "type": "string", "format": "date-time", "description": "Server timestamp of last message" },
+        "secretModeEnabled": { "type": "boolean", "description": "Whether disappearing E2EE mode is active" },
+        "typingUids": { "type": "array", "description": "Active typing UIDs (max 2)" },
+        "unreadCounts": { "type": "object", "description": "Map of UID to unread message count" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Server timestamp" },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Server timestamp" }
+      },
+      "required": ["participantIds", "participantNames", "participantPhotos", "lastMessageText", "lastMessageSenderId", "lastMessageStatus", "secretModeEnabled", "typingUids", "unreadCounts", "createdAt", "updatedAt"]
+    },
+    "ChatMessage": {
+      "title": "ChatMessage",
+      "description": "Individual message supporting standard and AES-256-GCM secret disappearing mode.",
+      "type": "object",
+      "properties": {
+        "chatId": { "type": "string", "description": "Parent chat ID" },
+        "senderId": { "type": "string", "description": "Sender UID" },
+        "receiverId": { "type": "string", "description": "Receiver UID" },
+        "participantIds": { "type": "array", "description": "Denormalized 2 participant UIDs" },
+        "text": { "type": "string", "description": "Plaintext message when isSecret is false" },
+        "isSecret": { "type": "boolean", "description": "True if encrypted and auto-deleting on read" },
+        "ciphertext": { "type": "string", "description": "Base64 AES-256-GCM ciphertext when isSecret is true" },
+        "iv": { "type": "string", "description": "Base64 12-byte IV when isSecret is true" },
+        "attachmentUrl": { "type": "string", "description": "Optional Firebase Storage download URL for image/document attachment" },
+        "attachmentType": { "type": "string", "enum": ["", "image", "document"], "description": "Attachment kind if present" },
+        "attachmentName": { "type": "string", "description": "Original filename of attachment" },
+        "attachmentSizeBytes": { "type": "integer", "description": "File size in bytes" },
+        "attachmentMimeType": { "type": "string", "description": "MIME type of the attachment" },
+        "status": { "type": "string", "enum": ["sent", "delivered", "read"], "description": "Delivery and read tick state" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Server timestamp" },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Server timestamp" }
+      },
+      "required": ["chatId", "senderId", "receiverId", "participantIds", "text", "isSecret", "ciphertext", "iv", "status", "createdAt", "updatedAt"]
+    },
+    "VoiceCall": {
+      "title": "VoiceCall",
+      "description": "WebRTC voice call signaling document and call log record.",
+      "type": "object",
+      "properties": {
+        "callerId": { "type": "string", "description": "Caller UID" },
+        "callerName": { "type": "string", "description": "Caller display name" },
+        "callerPhotoUrl": { "type": "string", "description": "Caller photo URL" },
+        "calleeId": { "type": "string", "description": "Callee UID" },
+        "calleeName": { "type": "string", "description": "Callee display name" },
+        "calleePhotoUrl": { "type": "string", "description": "Callee photo URL" },
+        "participantIds": { "type": "array", "description": "Exactly 2 participant UIDs" },
+        "status": { "type": "string", "enum": ["ringing", "connected", "ended", "declined", "missed"], "description": "Call signaling state" },
+        "offerSdp": { "type": "string", "description": "WebRTC SDP offer" },
+        "answerSdp": { "type": "string", "description": "WebRTC SDP answer" },
+        "durationSeconds": { "type": "integer", "description": "Call duration in seconds" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Server timestamp" },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Server timestamp" }
+      },
+      "required": ["callerId", "callerName", "callerPhotoUrl", "calleeId", "calleeName", "calleePhotoUrl", "participantIds", "status", "offerSdp", "answerSdp", "durationSeconds", "createdAt", "updatedAt"]
+    },
+    "IceCandidateDoc": {
+      "title": "IceCandidateDoc",
+      "description": "WebRTC ICE candidate exchanged via Firestore subcollection.",
+      "type": "object",
+      "properties": {
+        "senderId": { "type": "string", "description": "Sender UID" },
+        "participantIds": { "type": "array", "description": "Denormalized 2 participant UIDs" },
+        "sdpMid": { "type": "string", "description": "SDP media stream ID" },
+        "sdpMLineIndex": { "type": "integer", "description": "SDP m-line index" },
+        "sdp": { "type": "string", "description": "ICE candidate string" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Server timestamp" }
+      },
+      "required": ["senderId", "participantIds", "sdpMid", "sdpMLineIndex", "sdp", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/UserPublicProfile" },
+      "description": "Public discoverable profiles for chat discovery, presence, and ECDH public keys."
+    },
+    "/users/{userId}/private/{docId}": {
+      "schema": { "$ref": "#/entities/UserPrivateInfo" },
+      "description": "Owner-only PII (email) and FCM token."
+    },
+    "/chats/{chatId}": {
+      "schema": { "$ref": "#/entities/ChatThread" },
+      "description": "1-on-1 chat threads keyed by deterministic sorted participant UIDs."
+    },
+    "/chats/{chatId}/messages/{messageId}": {
+      "schema": { "$ref": "#/entities/ChatMessage" },
+      "description": "Real-time messages inside a 1-on-1 chat."
+    },
+    "/calls/{callId}": {
+      "schema": { "$ref": "#/entities/VoiceCall" },
+      "description": "WebRTC voice call signaling and call history."
+    },
+    "/calls/{callId}/candidates/{candidateId}": {
+      "schema": { "$ref": "#/entities/IceCandidateDoc" },
+      "description": "WebRTC ICE candidates for a voice call."
+    }
+  }
+}
